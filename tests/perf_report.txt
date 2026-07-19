@@ -1,0 +1,27 @@
+Для perf команды perf stat ./perf_example и perf stat -e task-clock ./perf_example были выполнены,
+но в контейнере отсутствуют права на использование аппаратных счетчиков производительности
+(No permission to enable cycles event / task-clock event).
+Это ограничение окружения (read-only kernel settings), поэтому полноценный отчет perf получить невозможно.
+Вывод вызова команд:
+
+dev@deb2a1650d52:/workspaces/cpp_middle_task8$ perf stat ./perf_example
+Error:
+No permission to enable cycles event.
+
+dev@deb2a1650d52:/workspaces/cpp_middle_task8$ perf stat -e task-clock ./perf_example
+Error:
+No permission to enable task-clock event.
+
+dev@deb2a1650d52:/workspaces/cpp_middle_task8$ cat /proc/sys/kernel/perf_event_paranoid
+2
+dev@deb2a1650d52:/workspaces/cpp_middle_task8$ sudo sysctl kernel.perf_event_paranoid=-1
+sysctl: setting key "kernel.perf_event_paranoid", ignoring: Read-only file system
+kernel.perf_event_paranoid = -1
+
+Запустим нашу утилиту рефакторинга для файла perf_example.cpp - нужно указать его в аргументах запуска в launch.json. Результат работы:
+/workspaces/cpp_middle_task8/tests/tests_data/perf_example.cpp:10:21: remark: Добавлен &
+   10 |     for (const auto obj : vec) {           // Копирование без &
+      |   
+
+Файл исходного кода был изменен соответствующим образом:
+    for (const auto& obj : vec) {           // Копирование без &

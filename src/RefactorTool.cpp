@@ -50,16 +50,15 @@ void RefactorHandler::handle_nv_dtor(const CXXDestructorDecl *Dtor, DiagnosticsE
     unsigned hash = Dtor->getBeginLoc().getHashValue();
     if (virtualDtorLocations.count(hash))
         return;
-    const unsigned DiagID = Diag.getCustomDiagID(DiagnosticsEngine::Remark, "Объявлен деструктор");
     virtualDtorLocations.insert(hash);
     Rewrite.InsertTextBefore(Dtor->getNameInfo().getBeginLoc(), "virtual ");
+    const unsigned DiagID = Diag.getCustomDiagID(DiagnosticsEngine::Remark, "Деструктор изменен на виртуальный");
     Diag.Report(Dtor->getLocation(), DiagID);
 }
 
 // todo: необходимо реализовать обработку случая отсутствие override
 void RefactorHandler::handle_miss_override(const CXXMethodDecl *Method, DiagnosticsEngine &Diag, SourceManager &SM) {
     // Реализуйте Ваш код ниже
-    const unsigned DiagID = Diag.getCustomDiagID(DiagnosticsEngine::Remark, "Объявлен метод");
     auto loc = Method->getNameInfo().getEndLoc();
     bool invalid = false;
     auto cur_symbol = SM.getCharacterData(loc, &invalid);
@@ -72,13 +71,13 @@ void RefactorHandler::handle_miss_override(const CXXMethodDecl *Method, Diagnost
     if (loc.isValid())
         Rewrite.InsertTextAfterToken(loc, " override");
 
+    const unsigned DiagID = Diag.getCustomDiagID(DiagnosticsEngine::Remark, "Добавлен override");
     Diag.Report(Method->getLocation(), DiagID);
 }
 
 // todo: необходимо реализовать обработку случая отсутствие & в range-for
 void RefactorHandler::handle_crange_for(const VarDecl *LoopVar, DiagnosticsEngine &Diag, SourceManager &SM) {
     // Реализуйте Ваш код ниже
-    const unsigned DiagID = Diag.getCustomDiagID(DiagnosticsEngine::Remark, "Объявлена переменная");
     if (LoopVar->getType()->isReferenceType() || LoopVar->getType()->isFundamentalType())
         return;
 
@@ -93,6 +92,7 @@ void RefactorHandler::handle_crange_for(const VarDecl *LoopVar, DiagnosticsEngin
     }
     if (loc.isValid())
         Rewrite.InsertTextAfter(loc, "&");
+    const unsigned DiagID = Diag.getCustomDiagID(DiagnosticsEngine::Remark, "Добавлен &");
     Diag.Report(LoopVar->getLocation(), DiagID);
 }
 
