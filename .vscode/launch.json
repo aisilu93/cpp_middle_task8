@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Debug",
             "program": "${workspaceFolder}/build/refactor_tool",
-            "args": ["${workspaceFolder}/tests/tests_data/for_refactor.cpp"],
+            "args": ["${workspaceFolder}/tests/tests_data/perf_example.cpp"],
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "GCC: Build Debug",
             "initCommands": ["settings set target.disable-aslr false"]
