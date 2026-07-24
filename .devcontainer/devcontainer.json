@@ -8,6 +8,10 @@
         "USER_GID": 1000
       }
   },
+  "runArgs": [
+    "--privileged",
+    "--cap-add=SYS_ADMIN"
+  ],
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "remoteUser": "dev",
   "postStartCommand": "conan profile detect || true",
